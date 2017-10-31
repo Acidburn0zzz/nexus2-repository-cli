@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"strings"
-	"log"
 	"fmt"
+	"log"
+	"strings"
 )
 
-func PrintCreateStatus (status, repoId, repoType string) {
+func PrintCreateStatus(status, repoId, repoType string) {
 	switch status {
 	case "201 Created":
 		log.Printf("%s repository with ID=%s is created.\n", strings.Title(repoType), repoId)

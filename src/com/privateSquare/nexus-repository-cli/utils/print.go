@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"os"
 )
 

@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"net/http"
+	"bytes"
 	"fmt"
 	"io/ioutil"
-	"bytes"
+	"net/http"
 )
 
 func HttpRequest(url, method string, body []byte, username, password string, verbose bool) ([]byte, string) {

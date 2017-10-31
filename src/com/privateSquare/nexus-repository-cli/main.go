@@ -1,12 +1,12 @@
 package main
 
 import (
-	"com/privateSquare/nexus-repository-cli/model"
 	"com/privateSquare/nexus-repository-cli/backend"
+	"com/privateSquare/nexus-repository-cli/model"
 	"com/privateSquare/nexus-repository-cli/utils"
 	"flag"
-	"log"
 	"fmt"
+	"log"
 )
 
 func main() {
@@ -40,17 +40,17 @@ func main() {
 	utils.PrintHelp()
 
 	if *list == true {
-		repositories := backend.List(*nexusUrl, *repoType,*provider, *repoPolicy,  user, *verbose)
+		repositories := backend.List(*nexusUrl, *repoType, *provider, *repoPolicy, user, *verbose)
 		utils.PrintStringArray(repositories)
 		fmt.Printf("No of %s %s repositories in Nexus : %d", *provider, *repoType, len(repositories))
-	}else if *create == true {
+	} else if *create == true {
 		if *repoId != "" && *repoType != "" && *provider != "" {
 			backend.CheckRepoType(*repoType)
 			backend.CheckProvider(*provider)
 			switch *repoType {
 			case "hosted":
 				if *provider == "maven2" {
-					if *repoPolicy == ""{
+					if *repoPolicy == "" {
 						log.Fatal("repoPolicy is a required parameter for creating a hosted maven repository in Nexus")
 					}
 					backend.CheckMavenRepoPolicy(*repoPolicy)
@@ -64,11 +64,11 @@ func main() {
 				}
 			case "proxy":
 				if *provider == "maven2" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo( user, *nexusUrl, *repoId, *repoType, "release", *remoteStorageUrl, "maven2", *exposed, *verbose)
+					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "release", *remoteStorageUrl, "maven2", *exposed, *verbose)
 				} else if *provider == "npm" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo( user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "npm-proxy", *exposed, *verbose)
+					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "npm-proxy", *exposed, *verbose)
 				} else if *provider == "nuget" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo( user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "nuget-proxy", *exposed, *verbose)
+					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "nuget-proxy", *exposed, *verbose)
 				} else {
 					log.Fatal("remoteStorageUrl is a required parameter for creating a proxy repository")
 				}
@@ -83,7 +83,7 @@ func main() {
 					log.Fatal("repositories is a required parameter for creating a group repository")
 				}
 			}
-		}else {
+		} else {
 			log.Fatal("repoId ,repoType and provider are required parameters for creating a repository in Nexus")
 		}
 	} else if *delete == true {
