@@ -2,7 +2,7 @@
 
 *_This only works on nexus 2_*
 
-## Usage:
+## Usage
 
 ```go
 Usage: ./nexus-repository-cli.exe [option] [parameters...]
@@ -42,7 +42,7 @@ Usage: ./nexus-repository-cli.exe [option] [parameters...]
         Set this flag for Debug logs.
 ```
 
-## Examples:
+## Examples
 
 ### [option] -list
 
