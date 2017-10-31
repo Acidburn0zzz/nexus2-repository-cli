@@ -21,7 +21,7 @@ func DeleteRepo(user model.User, nexusUrl, repoId string, verbose bool) {
 			repoType = repo.RepoType
 		}
 	}
-	if repoType == "hosted" || repoType == "proxy"{
+	if repoType == "hosted" || repoType == "proxy" {
 		url := nexusUrl + "/service/local/repositories/" + repoId
 		_, status := utils.HttpRequest(url, "DELETE", nil, user.Username, user.Password, verbose)
 		log.Println(status)

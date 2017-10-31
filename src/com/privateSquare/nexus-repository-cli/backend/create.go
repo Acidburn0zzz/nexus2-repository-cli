@@ -46,7 +46,7 @@ func CreateHostedRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, p
 	utils.PrintCreateStatus(status, repository.Data.ID, repository.Data.RepoType)
 }
 
-func CreateProxyRepo( user model.User, nexusUrl, repoId, repoType, repoPolicy, remoteStorageUrl, provider string, exposed, verbose bool) {
+func CreateProxyRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, remoteStorageUrl, provider string, exposed, verbose bool) {
 
 	url := nexusUrl + "/service/local/repositories"
 
@@ -95,10 +95,10 @@ func CreateGroupRepo(user model.User, nexusUrl, repoId, repoType, repositories, 
 
 	repositoriesArray := strings.Split(repositories, ",")
 
-	for _, repository := range repositoriesArray{
-		if CheckRepoExist(user, nexusUrl, repository, verbose){
-			repositoriesModel = append(repositoriesModel, model.Repositories{ID: repository,})
-		}else{
+	for _, repository := range repositoriesArray {
+		if CheckRepoExist(user, nexusUrl, repository, verbose) {
+			repositoriesModel = append(repositoriesModel, model.Repositories{ID: repository})
+		} else {
 			log.Printf("Repository with ID=%s does not exist in Nexus, hence not adding it to the group repository", repository)
 		}
 
