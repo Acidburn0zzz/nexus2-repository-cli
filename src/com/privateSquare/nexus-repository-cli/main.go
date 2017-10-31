@@ -14,7 +14,7 @@ func main() {
 	list := flag.Bool("list", false, "List the repositories in Nexus. Optional parameters: repoType, repoPolicy")
 	create := flag.Bool("create", false, "Create a repository in Nexus. Required parameter: repoId, repoType, provider, repoPolicy (only for maven2). Optional parameter: exposed")
 	delete := flag.Bool("delete", false, "Delete a repository in Nexus. Required parameter: repoId")
-	addRepoToGroup := flag.Bool("addRepoToGroup", false, "Add a reposirory to a group repository. Required paramters: repoId, repositories ")
+	addRepoToGroup := flag.Bool("addRepoToGroup", false, "Add a reposirory to a group repository. Required parameters: repoId, repositories ")
 	//variables
 	username := flag.String("username", "", "Username for authentication")
 	password := flag.String("password", "", "Password for authentication")
@@ -59,9 +59,7 @@ func main() {
 			log.Fatal("repoId ,repoType and provider are required parameters for creating a repository in Nexus")
 		}
 	} else if *delete == true {
-		if *repoId == "" {
-			log.Fatal("repoId is a required parameter")
-		}
+		backend.CheckRepoId(*repoId)
 		backend.DeleteRepo(user, *nexusUrl, *repoId, *verbose)
 	} else if *addRepoToGroup == true {
 		fmt.Println("Not implemented yet")

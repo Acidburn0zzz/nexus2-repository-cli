@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+/* Lists repositories available in nexus based on the input parameters
+   returns a array of repositories*/
 func List(nexusUrl, repoType, provider, repoPolicy string, user model.User, verbose bool) []string {
 	url := nexusUrl + "/service/local/all_repositories"
 

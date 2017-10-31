@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// PrintStringArray prints a string Array
 func PrintStringArray(stringArray []string) {
 	for _, array := range stringArray {
 		fmt.Println(array)
@@ -13,6 +14,7 @@ func PrintStringArray(stringArray []string) {
 
 }
 
+// PrintHelp prints help test
 func PrintHelp() {
 
 	helpString := `
@@ -26,7 +28,7 @@ func PrintHelp() {
   -delete
         Delete a repository in Nexus. Required parameter: repoId
   -addRepoToGroup
-        Add a reposirory to a group repository. Required paramters: repoId, repositories
+        Add a reposirory to a group repository. Required parameters: repoId, repositories
 
  [parameters]
   -nexusUrl string

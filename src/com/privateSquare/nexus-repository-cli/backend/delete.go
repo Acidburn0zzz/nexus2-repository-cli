@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+// DeleteRepo deletes a repository in Nexus
 func DeleteRepo(user model.User, nexusUrl, repoId string, verbose bool) {
 
 	url := nexusUrl + "/service/local/all_repositories"

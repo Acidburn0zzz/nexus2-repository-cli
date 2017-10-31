@@ -1,5 +1,6 @@
 package model
 
+// RepositoryData represents the Nexus repository data
 type RepositoryData struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
@@ -9,10 +10,12 @@ type RepositoryData struct {
 	Format     string `json:"format"`
 }
 
+// Repository represents a Nexus repository
 type Repository struct {
 	Data []RepositoryData `json:"data"`
 }
 
+// HostedRepositoryData represents the Nexus hosted repository data
 type HostedRepositoryData struct {
 	ID               string `json:"id"`
 	Name             string `json:"name"`
@@ -28,14 +31,17 @@ type HostedRepositoryData struct {
 	NotFoundCacheTTL int    `json:"notFoundCacheTTL"`
 }
 
+// HostedRepository represents a Nexus hosted repository
 type HostedRepository struct {
 	Data HostedRepositoryData `json:"data"`
 }
 
+// ProxyRemoteStorage represents the remoteStorageUrl for a proxy repository
 type ProxyRemoteStorage struct {
 	RemoteStorageURL string `json:"remoteStorageUrl"`
 }
 
+// ProxyRepositoryData represents the Nexus proxy repository data
 type ProxyRepositoryData struct {
 	ID                    string             `json:"id"`
 	Name                  string             `json:"name"`
@@ -57,14 +63,17 @@ type ProxyRepositoryData struct {
 	RemoteStorage         ProxyRemoteStorage `json:"remoteStorage"`
 }
 
+// ProxyRepository represents a Nexus proxy repository
 type ProxyRepository struct {
 	Data ProxyRepositoryData `json:"data"`
 }
 
+// Repositories represents the repositores for a group repository
 type Repositories struct {
 	ID string `json:"id"`
 }
 
+// GroupRepositoryData represents the Nexus group repository data
 type GroupRepositoryData struct {
 	ID           string         `json:"id"`
 	Name         string         `json:"name"`
@@ -73,6 +82,7 @@ type GroupRepositoryData struct {
 	Repositories []Repositories `json:"repositories"`
 }
 
+// GroupRepository represents a Nexus group repository
 type GroupRepository struct {
 	Data GroupRepositoryData `json:"data"`
 }

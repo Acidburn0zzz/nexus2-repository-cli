@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// CreateHostedRepo creates a hosted repository in Nexus
 func CreateHostedRepo(user model.User, nexusUrl,repoId, repoType, repoPolicy, provider string, exposed, verbose bool){
 	if provider == "maven2" {
 		if repoPolicy == "" {
@@ -24,6 +25,7 @@ func CreateHostedRepo(user model.User, nexusUrl,repoId, repoType, repoPolicy, pr
 	}
 }
 
+// CreateProxyRepo creates a proxy repository in Nexus
 func CreateProxyRepo(user model.User, nexusUrl,repoId, repoType, remoteStorageUrl, provider string, exposed, verbose bool){
 	if provider == "maven2" && remoteStorageUrl != "" {
 		createProxyRepo(user, nexusUrl, repoId, repoType, "release", remoteStorageUrl, "maven2", exposed, verbose)
@@ -36,6 +38,7 @@ func CreateProxyRepo(user model.User, nexusUrl,repoId, repoType, remoteStorageUr
 	}
 }
 
+// CreateGroupRepo creates a group repository in Nexus
 func CreateGroupRepo(user model.User, nexusUrl,repoId, repoType, repositories, provider string, exposed, verbose bool){
 	if provider == "maven2" && repositories != "" {
 		createGroupRepo(user, nexusUrl, repoId, repoType, repositories, "maven2", exposed, verbose)

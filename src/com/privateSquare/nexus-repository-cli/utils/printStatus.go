@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// PrintCreateStatus prints the status when a repository create us invoked based on the status of the response
 func PrintCreateStatus(status, repoId, repoType string) {
 	switch status {
 	case "201 Created":

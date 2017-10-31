@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// HttpRequest makes a hhtp request to the target server
 func HttpRequest(url, method string, body []byte, username, password string, verbose bool) ([]byte, string) {
 
 	client := &http.Client{}
