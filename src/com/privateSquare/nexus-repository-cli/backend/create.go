@@ -8,7 +8,47 @@ import (
 	"strings"
 )
 
-func CreateHostedRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, provider string, exposed, verbose bool) {
+func CreateHostedRepo(user model.User, nexusUrl,repoId, repoType, repoPolicy, provider string, exposed, verbose bool){
+	if provider == "maven2" {
+		if repoPolicy == "" {
+			log.Fatal("repoPolicy is a required parameter for creating a hosted maven repository in Nexus")
+		}
+		CheckMavenRepoPolicy(repoPolicy)
+		createHostedRepo(user, nexusUrl, repoId, repoType, repoPolicy, "maven2", exposed, verbose)
+	}
+	if provider == "npm" {
+		createHostedRepo(user, nexusUrl, repoId, repoType, "mixed", "npm-hosted", exposed, verbose)
+	}
+	if provider == "nuget" {
+		createHostedRepo(user, nexusUrl, repoId, repoType, "mixed", "nuget-proxy", exposed, verbose)
+	}
+}
+
+func CreateProxyRepo(user model.User, nexusUrl,repoId, repoType, remoteStorageUrl, provider string, exposed, verbose bool){
+	if provider == "maven2" && remoteStorageUrl != "" {
+		createProxyRepo(user, nexusUrl, repoId, repoType, "release", remoteStorageUrl, "maven2", exposed, verbose)
+	} else if provider == "npm" && remoteStorageUrl != "" {
+		createProxyRepo(user, nexusUrl, repoId, repoType, "mixed", remoteStorageUrl, "npm-proxy", exposed, verbose)
+	} else if provider == "nuget" && remoteStorageUrl != "" {
+		createProxyRepo(user, nexusUrl, repoId, repoType, "mixed", remoteStorageUrl, "nuget-proxy", exposed, verbose)
+	} else {
+		log.Fatal("remoteStorageUrl is a required parameter for creating a proxy repository")
+	}
+}
+
+func CreateGroupRepo(user model.User, nexusUrl,repoId, repoType, repositories, provider string, exposed, verbose bool){
+	if provider == "maven2" && repositories != "" {
+		createGroupRepo(user, nexusUrl, repoId, repoType, repositories, "maven2", exposed, verbose)
+	} else if provider == "npm" && repositories != "" {
+		createGroupRepo(user, nexusUrl, repoId, repoType, repositories, "npm-group", exposed, verbose)
+	} else if provider == "nuget" && repositories != "" {
+		createGroupRepo(user, nexusUrl, repoId, repoType, repositories, "nuget-group", exposed, verbose)
+	} else {
+		log.Fatal("repositories is a required parameter for creating a group repository")
+	}
+}
+
+func createHostedRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, provider string, exposed, verbose bool) {
 
 	url := nexusUrl + "/service/local/repositories"
 
@@ -46,7 +86,7 @@ func CreateHostedRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, p
 	utils.PrintCreateStatus(status, repository.Data.ID, repository.Data.RepoType)
 }
 
-func CreateProxyRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, remoteStorageUrl, provider string, exposed, verbose bool) {
+func createProxyRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, remoteStorageUrl, provider string, exposed, verbose bool) {
 
 	url := nexusUrl + "/service/local/repositories"
 
@@ -87,7 +127,7 @@ func CreateProxyRepo(user model.User, nexusUrl, repoId, repoType, repoPolicy, re
 	utils.PrintCreateStatus(status, repository.Data.ID, repository.Data.RepoType)
 }
 
-func CreateGroupRepo(user model.User, nexusUrl, repoId, repoType, repositories, provider string, exposed, verbose bool) {
+func createGroupRepo(user model.User, nexusUrl, repoId, repoType, repositories, provider string, exposed, verbose bool) {
 
 	url := nexusUrl + "/service/local/repo_groups"
 

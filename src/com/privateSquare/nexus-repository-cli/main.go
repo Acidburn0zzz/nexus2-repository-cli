@@ -49,39 +49,11 @@ func main() {
 			backend.CheckProvider(*provider)
 			switch *repoType {
 			case "hosted":
-				if *provider == "maven2" {
-					if *repoPolicy == "" {
-						log.Fatal("repoPolicy is a required parameter for creating a hosted maven repository in Nexus")
-					}
-					backend.CheckMavenRepoPolicy(*repoPolicy)
-					backend.CreateHostedRepo(user, *nexusUrl, *repoId, *repoType, *repoPolicy, "maven2", *exposed, *verbose)
-				}
-				if *provider == "npm" {
-					backend.CreateHostedRepo(user, *nexusUrl, *repoId, *repoType, "mixed", "npm-hosted", *exposed, *verbose)
-				}
-				if *provider == "nuget" {
-					backend.CreateHostedRepo(user, *nexusUrl, *repoId, *repoType, "mixed", "nuget-proxy", *exposed, *verbose)
-				}
+				backend.CreateHostedRepo(user, *nexusUrl, *repoId, *repoType, *repoPolicy, *provider , *exposed, *verbose )
 			case "proxy":
-				if *provider == "maven2" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "release", *remoteStorageUrl, "maven2", *exposed, *verbose)
-				} else if *provider == "npm" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "npm-proxy", *exposed, *verbose)
-				} else if *provider == "nuget" && *remoteStorageUrl != "" {
-					backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, "mixed", *remoteStorageUrl, "nuget-proxy", *exposed, *verbose)
-				} else {
-					log.Fatal("remoteStorageUrl is a required parameter for creating a proxy repository")
-				}
+				backend.CreateProxyRepo(user, *nexusUrl, *repoId, *repoType, *remoteStorageUrl, *provider , *exposed, *verbose )
 			case "group":
-				if *provider == "maven2" && *repositories != "" {
-					backend.CreateGroupRepo(user, *nexusUrl, *repoId, *repoType, *repositories, "maven2", *exposed, *verbose)
-				} else if *provider == "npm" && *repositories != "" {
-					backend.CreateGroupRepo(user, *nexusUrl, *repoId, *repoType, *repositories, "npm-group", *exposed, *verbose)
-				} else if *provider == "nuget" && *repositories != "" {
-					backend.CreateGroupRepo(user, *nexusUrl, *repoId, *repoType, *repositories, "nuget-group", *exposed, *verbose)
-				} else {
-					log.Fatal("repositories is a required parameter for creating a group repository")
-				}
+				backend.CreateGroupRepo(user, *nexusUrl, *repoId, *repoType, *repositories, *provider , *exposed, *verbose )
 			}
 		} else {
 			log.Fatal("repoId ,repoType and provider are required parameters for creating a repository in Nexus")
