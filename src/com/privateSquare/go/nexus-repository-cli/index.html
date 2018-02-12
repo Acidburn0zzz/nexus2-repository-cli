@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    <title>{{.Title}}</title>
+</head>
+
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $('input[name="submit"]').click(function(){
+            $('form').submit();
+            $(this).hide();
+        });
+    });
+</script>
+
+<body>
+
+<form action="/something" method="post">
+
+    {{range .PageTextBoxes}}
+        {{.TextBoxText}} : <input type="text" name={{.TextBoxName}} placeholder={{.TextBoxPlaceHolder}} required="true"><br>
+    {{end}}
+
+    {{range .ActionRadioButtons}}
+        <input type="radio" name={{.RadioButtonName}} value={{.RadioButtonValue}} required>{{.RadioButtonText}}
+    {{end}}
+    <br>
+    {{range .PolicyRadioButtons}}
+        <input type="radio" name={{.RadioButtonName}} value={{.RadioButtonValue}} required>{{.RadioButtonText}}
+    {{end}}
+    <br>
+    <input type="checkbox" name={{.CheckBoxName}}>{{.CheckBoxText}} <br>
+
+    <input type="submit" name={{.ButtonName}}>
+
+</form>
+
+</body>
+</html>
