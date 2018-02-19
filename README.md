@@ -1,43 +1,59 @@
 # Nexus Repository CLI
 
-*_This only works on nexus 2_*
+*_This only works with nexus 2 repository manager_*
 
 ## Usage
 
 ```go
-Usage: ./nexus-repository-cli.exe [option] [parameters...]
-
- [options]
-  -list
-        List the repositories in Nexus. Optional parameters: repoType, repoPolicy
-  -create
-        Create a repository in Nexus. Required parameter: repoId, repoType, provider, repoPolicy (only for maven2). Optional parameter: exposed
-  -delete
-        Delete a repository in Nexus. Required parameter: repoId
+Usage of nexus2-repository-cli.exe:
   -addRepoToGroup
-        Add a reposirory to a group repository. Required paramters: repoId, repositories
-
- [parameters]
-  -nexusUrl string
-        Nexus server URL (default "http://localhost:8081/nexus")
+        Add a reposirory to a group repository. Required parameters: repoId, repositories.
+  -browseable
+        Set this flag to make the repository browseable in nexus.
+  -createMavenGroupRepo
+        Create a maven group repository. Required parameters: repoId.
+  -createMavenHostedRepo
+        Create a maven hosted repository (By default a snapshot repository is created). Required parameters: repoId Optional parameter: release (creates a release repository).
+  -createMavenProxyRepo
+        Create a maven proxy repository. Required parameters: repoId, remoteStorageURL. Optional parameters: exposed, browseable.
+  -createMavenTarget
+        Create a maven repository target. Required parameters: repoTargetName, patternExpression.
+  -createPrivileges
+        Create repository privileges. Required parameters: repoPrivilegeName, repoTargetName.
+  -delete
+        Delete a repository in Nexus. Required parameter: repoId.
+  -deletePrivileges
+        Delete repository privileges. Required parameters: repoPrivilegeName.
+  -deleteTarget
+        Delete a repository target. Required parameters: repoTargetName.
   -exposed
         Set this flag to expose the repository in nexus.
-  -username string
-        Username for authentication
+  -list
+        List the repositories in Nexus. Optional parameters: repoType, repoPolicy
+  -nexusURL string
+        Nexus server URL. (default "http://localhost:8081/nexus")
   -password string
-        Password for authentication
-  -repoId string
-        ID of the Repository
-  -repoType string
-        Type of a repository. Possible values : hosted/proxy/group
-  -repoPolicy string
-        Policy of the hosted repository. Possible values : snapshot/release
+        Password for authentication.
+  -patternExpression string
+        Repository target pattern expression. Can be comma separated values.
   -provider string
-        Repository provider. Possible values: maven2/npm/nuget
-  -remoteStorageUrl string
-        Remote storage url to proxy in Nexus
-  -repositories string
-        Comma separated value of repositories to be added to a group.
+        Repository provider. Possible values: maven2/npm/nuget.
+  -release
+        Set this flag for creating a maven release repository.
+  -remoteStorageURL string
+        Remote storage url to proxy in Nexus.
+  -repoId string
+        ID of a Repository.
+  -repoPolicy string
+        Policy of the hosted repository. Possible values : snapshot/release.
+  -repoPrivilegeName string
+        Repository Privilege name.
+  -repoTargetName string
+        Repository target name.
+  -repoType string
+        Type of a repository. Possible values : hosted/proxy/group.
+  -username string
+        Username for authentication.
   -verbose
         Set this flag for Debug logs.
 ```
@@ -51,38 +67,6 @@ Usage: ./nexus-repository-cli.exe [option] [parameters...]
 ./nexus-repository-cli.exe -username ***** -password ***** -list -repoType hosted # Prints all the hosted repositories
 ./nexus-repository-cli.exe -username ***** -password ***** -list -provider maven2 # Prints all the maven repositories
 ./nexus-repository-cli.exe -username ***** -password ***** -list -repoType hosted -provider maven2 # Prints all the hosted maven repositories
+# TODO search on -repoPolicy is not working
 ./nexus-repository-cli.exe -username ***** -password ***** -list -repoType hosted -provider maven2 -repoPolicy release # Prints all the hosted maven Release repositories
-```
-
-### [option] -create
-
-#### Maven repository
-
-```sh
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-maven-snapshot -repoType hosted -provider maven -repoPolicy snapshot -exposed
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-maven-releases -repoType hosted -provider maven -repoPolicy release -exposed
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-maven-proxy -repoType proxy -provider maven -remoteStorageUrl https://repo1.maven.org/maven2/
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-maven-group -repoType group -provider maven -repositories ATS-maven-snapshot,ATS-maven-releases,ATS-maven-proxy -exposed
-```
-
-#### NPM repository
-
-```sh
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-npm-releases -repoType hosted -provider npm -exposed
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-npm-proxy -repoType proxy -provider npm -remoteStorageUrl http://registry.npmjs.org/
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-npm-group -repoType group -provider npm -repositories ATS-npm-releases,ATS-npm-proxy -exposed
-```
-
-#### Nuget repository
-
-```sh
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-nuget-gallery -repoType hosted -provider nuget -exposed
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-nuget-proxy -repoType proxy -provider nuget -remoteStorageUrl https://www.nuget.org/api/v2/
-./nexus-repository-cli.exe -username ***** -password ***** -create -repoId ATS-nuget-group -repoType group -provider nuget -repositories ATS-nuget-gallery,ATS-nuget-proxy -exposed
-```
-
-### [option] -delete
-
-```sh
-./nexus-repository-cli.exe -username ***** -password ***** -delete -repoId ATS-maven-snapshot
 ```
