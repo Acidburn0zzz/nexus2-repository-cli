@@ -25,16 +25,16 @@ type RepositoryTargetCreate struct {
 
 //privileges
 
-type RepoPrivilegesData struct {
+type PrivilegesData struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 }
 
-type RepoPrivileges struct {
-	Data []RepoPrivilegesData `json:"data"`
+type Privileges struct {
+	Data []PrivilegesData `json:"data"`
 }
 
-type RepoPrivilegeCreateData struct {
+type PrivilegeCreateData struct {
 	Name               string `json:"name"`
 	Description        string `json:"description"`
 	RepositoryID       string `json:"repositoryId"`
@@ -44,7 +44,25 @@ type RepoPrivilegeCreateData struct {
 	Method 			   []string `json:"method"`
 }
 
-type RepoPrivilegesCreate struct {
-	Data RepoPrivilegeCreateData `json:"data"`
+type PrivilegesCreate struct {
+	Data PrivilegeCreateData `json:"data"`
 }
 
+// roles
+
+type RoleData struct {
+	ID             string        `json:"id"`
+	Name           string        `json:"name"`
+	Description    string        `json:"description"`
+	SessionTimeout int           `json:"sessionTimeout"`
+	Roles          []string 	 `json:"roles"`
+	Privileges     []string 	 `json:"privileges"`
+}
+
+type Role struct {
+	Data RoleData `json:"data"`
+}
+
+type Roles struct {
+	Data []RoleData `json:"data"`
+}
