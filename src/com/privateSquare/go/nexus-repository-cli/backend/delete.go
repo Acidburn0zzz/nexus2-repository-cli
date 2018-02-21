@@ -3,35 +3,34 @@ package backend
 import (
 	m "com/privateSquare/go/nexus-repository-cli/model"
 	u "com/privateSquare/go/nexus-repository-cli/utils"
-	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 )
 
-// DeleteRepo deletes a repository in Nexus
-func DeleteRepo(user m.AuthUser, nexusUrl, repoId string, verbose bool) {
-
-	url := nexusUrl + "/service/local/all_repositories"
-
-	req := u.CreateBaseRequest("GET", url, nil, user, verbose)
-	response, _ := u.HTTPRequest(user, req, verbose)
-
-	var repoType string
-	var jsonObject m.Repository
-	json.Unmarshal(response, &jsonObject)
-
-	for _, repo := range jsonObject.Data {
-		if repo.ID == repoId {
-			repoType = repo.RepoType
-		}
+// DeleteRepo deletes a hosted/proxy repository in Nexus
+func DeleteRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	if repoExists(nexusURL, repoID, user, verbose){
+		url := fmt.Sprintf("%s/service/local/repositories/%s", nexusURL, repoID)
+		req := u.CreateBaseRequest("DELETE", url, nil, user, verbose)
+		u.HTTPRequest(user, req, verbose)
+		log.Printf("Repository '%s' deleted.\n", repoID)
+	} else{
+		log.Printf("Repository '%s' does not exist.\n", repoID)
+		os.Exit(1)
 	}
-	if repoType == "hosted" || repoType == "proxy" {
-		//url := nexusUrl + "/service/local/repositories/" + repoId
-		//_, status := utils.HttpRequest(url, "DELETE", nil, user.Username, user.Password, verbose)
-		//log.Println(status)
-	} else if repoType == "group" {
-		//url := nexusUrl + "/service/local/repo_groups/" + repoId
-		//_, status := utils.HttpRequest(url, "DELETE", nil, user.Username, user.Password, verbose)
-		//log.Println(status)
-	} else {
-		//log.Printf("Repository with ID=%s does not exist.", repoId)
+}
+
+func DeleteGroupRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	if groupRepoExists(nexusURL, repoID, user, verbose){
+		url := fmt.Sprintf("%s/service/local/repo_groups/%s", nexusURL, repoID)
+		req := u.CreateBaseRequest("DELETE", url, nil, user, verbose)
+		u.HTTPRequest(user, req, verbose)
+		log.Printf("Repository group '%s' deleted.\n", repoID)
+	} else{
+		log.Printf("Repository group '%s' does not exist.\n", repoID)
+		os.Exit(1)
 	}
 }

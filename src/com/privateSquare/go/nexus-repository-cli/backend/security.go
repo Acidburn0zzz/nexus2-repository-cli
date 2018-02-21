@@ -13,8 +13,7 @@ import (
 
 func CreateMavenRepoTarget(nexusURL, repoTargetName, patternExpressions string, user m.AuthUser, verbose bool){
 	if repoTargetName == "" || patternExpressions == "" {
-		log.Println("repoTargetName and patternExpressions are required parameters for creating a repository target.")
-		os.Exit(1)
+		log.Fatal("repoTargetName and patternExpressions are required parameters for creating a repository target.")
 	}
 	createRepoTarget(nexusURL, repoTargetName, patternExpressions, "maven2", user, verbose)
 }
@@ -49,8 +48,7 @@ func createRepoTarget(nexusURL, repoTargetName, patternExpressions, contentClass
 
 func DeleteRepoTarget(nexusURL, repoTargetName string ,user m.AuthUser, verbose bool){
 	if repoTargetName == "" {
-		log.Println("repoTargetName is a required paramteter for deleting a repository target.")
-		os.Exit(1)
+		log.Fatal("repoTargetName is a required paramteter for deleting a repository target.")
 	}
 	if repoTargetExists(nexusURL, repoTargetName, user, verbose){
 		repoTargetID := getRepoTargetID(nexusURL, repoTargetName, user, verbose)
@@ -94,8 +92,7 @@ func repoTargetExists (nexusURL, repoTargetName string, user m.AuthUser, verbose
 
 func CreatePrivileges(nexusURL, privilegeName, repoTargetName string ,user m.AuthUser, verbose bool){
 	if privilegeName == "" || repoTargetName == "" {
-		log.Println("privilegeName and repoTargetName are required parameters for creating repository privileges.")
-		os.Exit(1)
+		log.Fatal("privilegeName and repoTargetName are required parameters for creating repository privileges.")
 	}
 	if !repoPrivilegesExists(nexusURL, privilegeName, user, verbose){
 		url := fmt.Sprintf("%s/service/local/privileges_target", nexusURL)
@@ -123,8 +120,7 @@ func CreatePrivileges(nexusURL, privilegeName, repoTargetName string ,user m.Aut
 
 func DeletePrivileges(nexusURL, privilegeName string ,user m.AuthUser, verbose bool){
 	if privilegeName == "" {
-		log.Println("privilegeName is a required parameter for deleting repository privileges.")
-		os.Exit(1)
+		log.Fatal("privilegeName is a required parameter for deleting repository privileges.")
 	}
 	if repoPrivilegesExists(nexusURL, privilegeName, user, verbose){
 		repoPrivilegesID := getPrivilegesID(nexusURL, privilegeName, user, verbose)
@@ -200,8 +196,7 @@ func privilegeExists (nexusURL, privilegeName string, user m.AuthUser, verbose b
 
 func CreateRole (nexusURL, roleName string, privileges, roles string, user m.AuthUser, verbose bool){
 	if roleName == "" || privileges == "" || roles == "" {
-		log.Println("roleName, privileges and roles are required paramters for creating a role.")
-		os.Exit(1)
+		log.Fatal("roleName, privileges and roles are required paramters for creating a role.")
 	}
 	var (
 		previlegesIDList []string
@@ -262,8 +257,7 @@ func createRoleMapping(nexusURL, roleName string, privilegesID, rolesID []string
 
 func DeleteRole (nexusURL, roleName string, user m.AuthUser, verbose bool){
 	if roleName == "" {
-		log.Println("roleName is a required parameter for deleting a role.")
-		os.Exit(1)
+		log.Fatal("roleName is a required parameter for deleting a role.")
 	}
 	if roleExists(nexusURL, roleName, user, verbose){
 		url := fmt.Sprintf("%s/service/local/roles/%s", nexusURL, roleName)

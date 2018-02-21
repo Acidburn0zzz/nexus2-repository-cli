@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-func CreateMavenHostedRepo(nexusURL, repoId string, user m.AuthUser, release, verbose bool) {
-	CheckRepoId(repoId)
+func CreateMavenHostedRepo(nexusURL, repoID string, user m.AuthUser, release, verbose bool) {
+	checkRepoId(repoID)
 	var (
 		repoPolicy  string
 		writePolicy string
@@ -23,66 +23,71 @@ func CreateMavenHostedRepo(nexusURL, repoId string, user m.AuthUser, release, ve
 		repoPolicy = "SNAPSHOT"
 		writePolicy = "ALLOW_WRITE"
 	}
-	createHostedRepo(nexusURL, repoId, "maven2", repoPolicy, writePolicy, user, verbose)
+	createHostedRepo(nexusURL, repoID, "maven2", repoPolicy, writePolicy, user, verbose)
 }
 
-func CreateMavenProxyRepo(nexusURL, repoId, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
-	CheckRepoId(repoId)
+func CreateMavenProxyRepo(nexusURL, repoID, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
+	checkRepoId(repoID)
 	if remoteStorageURL == "" {
 		log.Fatal("remoteStorageURL is a required parameter for creating a proxy repository")
 	}
-	createProxyRepo(nexusURL, repoId, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
+	createProxyRepo(nexusURL, repoID, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
 }
 
-func CreateMavenGroupRepo(nexusURL, repoId string, user m.AuthUser, verbose bool) {
-	CheckRepoId(repoId)
-	createGroupRepo(nexusURL, repoId, "group", "maven2", user, verbose)
+func CreateMavenGroupRepo(nexusURL, repoID, repositories string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	createGroupRepo(nexusURL, repoID, "group", "maven2", user, verbose)
+	if repositories == "" {
+		log.Println("repostories field is empty, hence creating a empty group repository.")
+	}else{
+		AddRepoToGroup(nexusURL, repoID, repositories, user, verbose)
+	}
 }
 
-func CreateNPMHostedRepo(nexusURL, repoId string, user m.AuthUser, verbose bool) {
-	CheckRepoId(repoId)
-	createHostedRepo(nexusURL, repoId, "npm-hosted", "mixed", "ALLOW_WRITE_ONCE", user, verbose)
+func CreateNPMHostedRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	createHostedRepo(nexusURL, repoID, "npm-hosted", "mixed", "ALLOW_WRITE_ONCE", user, verbose)
 }
 
-func CreateNPMProxyRepo(nexusURL, repoId, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
-	CheckRepoId(repoId)
+func CreateNPMProxyRepo(nexusURL, repoID, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
+	checkRepoId(repoID)
 	if remoteStorageURL == "" {
 		log.Fatal("remoteStorageURL is a required parameter for creating a proxy repository")
 	}
-	createProxyRepo(nexusURL, repoId, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
+	createProxyRepo(nexusURL, repoID, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
 }
 
-func CreateNPMGroupRepo(nexusURL, repoId string, user m.AuthUser, verbose bool) {
-	CheckRepoId(repoId)
-	createGroupRepo(nexusURL, repoId, "group", "npm-group", user, verbose)
+func CreateNPMGroupRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	createGroupRepo(nexusURL, repoID, "group", "npm-group", user, verbose)
 }
 
-func CreateNugetHostedRepo(nexusURL, repoId string, user m.AuthUser, verbose bool) {
-	CheckRepoId(repoId)
-	createHostedRepo(nexusURL, repoId, "nuget-proxy", "mixed", "ALLOW_WRITE_ONCE", user, verbose)
+func CreateNugetHostedRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	createHostedRepo(nexusURL, repoID, "nuget-proxy", "mixed", "ALLOW_WRITE_ONCE", user, verbose)
 }
 
-func CreateNugetProxyRepo(nexusURL, repoId, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
-	CheckRepoId(repoId)
+func CreateNugetProxyRepo(nexusURL, repoID, remoteStorageURL string, user m.AuthUser, exposed, browseable, verbose bool) {
+	checkRepoId(repoID)
 	if remoteStorageURL == "" {
 		log.Fatal("remoteStorageURL is a required parameter for creating a proxy repository")
 	}
-	createProxyRepo(nexusURL, repoId, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
+	createProxyRepo(nexusURL, repoID, "maven2", "release", remoteStorageURL, user, exposed, browseable, verbose)
 }
 
-func CreateNugetGroupRepo(nexusURL, repoId string, user m.AuthUser, verbose bool) {
-	CheckRepoId(repoId)
-	createGroupRepo(nexusURL, repoId, "group", "nuget-group", user, verbose)
+func CreateNugetGroupRepo(nexusURL, repoID string, user m.AuthUser, verbose bool) {
+	checkRepoId(repoID)
+	createGroupRepo(nexusURL, repoID, "group", "nuget-group", user, verbose)
 }
 
-func createHostedRepo(nexusURL, repoId, provider, repoPolicy, writePolicy string, user m.AuthUser, verbose bool) {
+func createHostedRepo(nexusURL, repoID, provider, repoPolicy, writePolicy string, user m.AuthUser, verbose bool) {
 
 	url := fmt.Sprintf("%s/service/local/repositories", nexusURL)
 
 	repository := m.HostedRepository{
 		Data: m.HostedRepositoryData{
-			ID:               repoId,
-			Name:             repoId,
+			ID:               repoID,
+			Name:             repoID,
 			RepoType:         "hosted",
 			RepoPolicy:       strings.ToUpper(repoPolicy),
 			Provider:         provider,
@@ -102,10 +107,10 @@ func createHostedRepo(nexusURL, repoId, provider, repoPolicy, writePolicy string
 	req := u.CreateBaseRequest("POST", url, body, user, verbose)
 	_, status := u.HTTPRequest(user, req, verbose)
 
-	handleCreateStatus(status, repoId, repository.Data.RepoType)
+	handleCreateStatus(status, repoID, repository.Data.RepoType)
 }
 
-func createProxyRepo(nexusURL, repoId, provider, repoPolicy, remoteStorageUrl string, user m.AuthUser, exposed, browseable, verbose bool) {
+func createProxyRepo(nexusURL, repoID, provider, repoPolicy, remoteStorageUrl string, user m.AuthUser, exposed, browseable, verbose bool) {
 
 	url := fmt.Sprintf("%s/service/local/repositories", nexusURL)
 
@@ -115,8 +120,8 @@ func createProxyRepo(nexusURL, repoId, provider, repoPolicy, remoteStorageUrl st
 
 	repository := m.ProxyRepository{
 		Data: m.ProxyRepositoryData{
-			ID:                    repoId,
-			Name:                  repoId,
+			ID:                    repoID,
+			Name:                  repoID,
 			RepoType:              "proxy",
 			RepoPolicy:            strings.ToUpper(repoPolicy),
 			Provider:              provider,
@@ -142,19 +147,18 @@ func createProxyRepo(nexusURL, repoId, provider, repoPolicy, remoteStorageUrl st
 	req := u.CreateBaseRequest("POST", url, body, user, verbose)
 	_, status := u.HTTPRequest(user, req, verbose)
 
-	handleCreateStatus(status, repoId, repository.Data.RepoType)
+	handleCreateStatus(status, repoID, repository.Data.RepoType)
 }
 
-func createGroupRepo(nexusURL, repoId, repoType, provider string, user m.AuthUser, verbose bool) {
-
+func createGroupRepo(nexusURL, repoID, repoType, provider string, user m.AuthUser, verbose bool) {
 	url := fmt.Sprintf("%s/service/local/repo_groups", nexusURL)
-
 	repository := m.GroupRepository{
 		Data: m.GroupRepositoryData{
-			ID:       repoId,
-			Name:     repoId,
+			ID:       repoID,
+			Name:     repoID,
 			Provider: provider,
 			Exposed:  true,
+			Repositories:[]m.Repositories{},
 		},
 	}
 
@@ -164,15 +168,15 @@ func createGroupRepo(nexusURL, repoId, repoType, provider string, user m.AuthUse
 	req := u.CreateBaseRequest("POST", url, body, user, verbose)
 	_, status := u.HTTPRequest(user, req, verbose)
 
-	handleCreateStatus(status, repoId, repoType)
+	handleCreateStatus(status, repoID, repoType)
 }
 
-func handleCreateStatus(status, repoId, repoType string) {
+func handleCreateStatus(status, repoID, repoType string) {
 	switch status {
 	case "201 Created":
-		log.Printf("%s repository with ID=%s is created.\n", strings.Title(repoType), repoId)
+		log.Printf("%s repository with ID=%s is created.\n", strings.Title(repoType), repoID)
 	case "400 Bad Request":
-		log.Printf("Repository with ID=%s already exists!\n", repoId)
+		log.Printf("Repository with ID=%s already exists!\n", repoID)
 	case "401 Unauthorized":
 		log.Println("User could not be authenticated")
 		os.Exit(1)
