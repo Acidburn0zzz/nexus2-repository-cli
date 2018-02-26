@@ -90,9 +90,14 @@ func repoTargetExists (nexusURL, repoTargetName string, user m.AuthUser, verbose
 	return isExists
 }
 
-func CreatePrivileges(nexusURL, privilegeName, repoTargetName string ,user m.AuthUser, verbose bool){
+func CreatePrivileges(nexusURL, privilegeName, repoID, repoTargetName string ,user m.AuthUser, verbose bool){
 	if privilegeName == "" || repoTargetName == "" {
 		log.Fatal("privilegeName and repoTargetName are required parameters for creating repository privileges.")
+	}
+	groupRepoID := ""
+	if groupRepoExists(nexusURL, repoID, user, verbose){
+		groupRepoID = repoID
+		repoID = ""
 	}
 	if !repoPrivilegesExists(nexusURL, privilegeName, user, verbose){
 		url := fmt.Sprintf("%s/service/local/privileges_target", nexusURL)
@@ -100,8 +105,8 @@ func CreatePrivileges(nexusURL, privilegeName, repoTargetName string ,user m.Aut
 			Data: m.PrivilegeCreateData{
 				Name:privilegeName,
 				Description:privilegeName,
-				RepositoryID:"",
-				RepositoryGroupID:"",
+				RepositoryID:repoID,
+				RepositoryGroupID:groupRepoID,
 				Type:"target",
 				RepositoryTargetID:getRepoTargetID(nexusURL, repoTargetName, user, verbose),
 				Method: []string{"create", "read", "update", "delete"},
@@ -148,7 +153,7 @@ func getPrivilegesID (nexusURL, privilegeName string, user m.AuthUser, verbose b
 	cRegexp, err := regexp.Compile(privilegeName + " ")
 	u.Error(err, "There was a error compiling the regex.")
 	for _, privilege := range privileges.Data{
-		if cRegexp.MatchString(privilege.Name) {
+		if cRegexp.MatchString(privilege.Name) && privilege.Name != fmt.Sprintf("%s - (view)", privilegeName) {
 			privilegesID = append(privilegesID, privilege.ID)
 		}
 	}
@@ -195,35 +200,39 @@ func privilegeExists (nexusURL, privilegeName string, user m.AuthUser, verbose b
 }
 
 func CreateRole (nexusURL, roleName string, privileges, roles string, user m.AuthUser, verbose bool){
-	if roleName == "" || privileges == "" || roles == "" {
-		log.Fatal("roleName, privileges and roles are required paramters for creating a role.")
+	if roleName == "" || privileges == "" && roles == "" {
+		log.Fatal("roleName, privileges/roles are required paramters for creating a role.")
 	}
 	var (
-		previlegesIDList []string
+		privilegesIDList []string
 		rolesIDList [] string
 	)
 	if !roleExists(nexusURL,roleName,user,verbose){
-		privilegesList := strings.Split(privileges, ",")
-		for _, privilege := range privilegesList{
-			if privilegeExists(nexusURL, privilege, user, verbose){
-				previlegesIDList = append(previlegesIDList, getPrivilegeID(nexusURL, privilege, user, verbose))
-			} else {
-				log.Printf("Privilege '%s' does not exist, hence not adding the prvilege to the role '%s'.\n", privilege, roleName)
+		if privileges != ""{
+			privilegesList := strings.Split(privileges, ",")
+			for _, privilege := range privilegesList{
+				if privilegeExists(nexusURL, privilege, user, verbose){
+					privilegesIDList = append(privilegesIDList, getPrivilegeID(nexusURL, privilege, user, verbose))
+				} else {
+					log.Printf("Privilege '%s' does not exist, hence not adding the privilege to the role '%s'.\n", privilege, roleName)
+				}
 			}
 		}
-		rolesList := strings.Split(roles, ",")
-		for _, role := range rolesList{
-			if roleExists(nexusURL, role, user, verbose){
-				rolesIDList = append(rolesIDList, getRoleID(nexusURL, role, user, verbose))
-			}else {
-				log.Printf("Role '%s' does not exist, hence not adding the role to the role '%s'.\n", role, roleName)
+		if roles != ""{
+			rolesList := strings.Split(roles, ",")
+			for _, role := range rolesList{
+				if roleExists(nexusURL, role, user, verbose){
+					rolesIDList = append(rolesIDList, getRoleID(nexusURL, role, user, verbose))
+				}else {
+					log.Printf("Role '%s' does not exist, hence not adding the role to the role '%s'.\n", role, roleName)
+				}
 			}
 		}
-		if len(previlegesIDList) == 0 || len(rolesIDList) == 0{
-			log.Printf("Need to add atlease one privilege/role for creating a new role.\n")
+		if len(privilegesIDList) == 0 && len(rolesIDList) == 0{
+			log.Printf("Need to add atleast one privilege/role for creating a new role.\n")
 			os.Exit(1)
 		}else{
-			createRoleMapping(nexusURL, roleName, previlegesIDList, rolesList, user, verbose)
+			createRoleMapping(nexusURL, roleName, privilegesIDList, rolesIDList, user, verbose)
 		}
 	}else{
 		log.Printf("Role '%s' already exists.\n", roleName)
@@ -233,6 +242,12 @@ func CreateRole (nexusURL, roleName string, privileges, roles string, user m.Aut
 }
 
 func createRoleMapping(nexusURL, roleName string, privilegesID, rolesID []string, user m.AuthUser, verbose bool){
+	if len(privilegesID) == 0{
+		privilegesID = []string{}
+	}
+	if len(rolesID) == 0{
+		rolesID = []string{}
+	}
 	if !roleExists(nexusURL,roleName,user,verbose){
 		url := fmt.Sprintf("%s/service/local/roles", nexusURL)
 		rolesData := m.RoleData{

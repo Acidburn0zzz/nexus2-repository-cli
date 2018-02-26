@@ -13,6 +13,7 @@ func main() {
 	//actions
 	///onboarding
 	javaOnboarding := flag.Bool("javaOnboarding", false, "Create a new space for a application in the java repo structure. Required paramters: appSysLetters.")
+	javaOffboarding := flag.Bool("javaOffboarding", false, "Remove an application from the java repo structure. Required paramters: appSysLetters.")
 	///repository
 	list := flag.Bool("list", false, "List the repositories in Nexus. Optional parameters: repoType, repoPolicy")
 	createMavenHostedRepo := flag.Bool("createMavenHostedRepo", false, "Create a maven hosted repository (By default a snapshot repository is created). Required parameters: repoID Optional parameter: release (creates a release repository).")
@@ -25,7 +26,7 @@ func main() {
 	createMavenTarget := flag.Bool("createMavenTarget", false, "Create a maven repository target. Required parameters: repoTargetName, patternExpression.")
 	deleteTarget := flag.Bool("deleteTarget", false, "Delete a repository target. Required parameters: repoTargetName.")
 	///privileges
-	createPrivileges := flag.Bool("createPrivileges", false, "Create repository privileges. Required parameters: privilegeName, repoTargetName.")
+	createPrivileges := flag.Bool("createPrivileges", false, "Create repository privileges. Required parameters: privilegeName, repoID, repoTargetName.")
 	deletePrivileges := flag.Bool("deletePrivileges", false, "Delete repository privileges. Required parameters: privilegeName.")
 	///roles
 	createRole := flag.Bool("createRole", false, "Create roles. Required parameters: roleName, privileges, roles.")
@@ -66,10 +67,10 @@ func main() {
 		log.Fatal("nexusUrl is a required parameter")
 	}
 
-	//b.JavaOnboarding(*nexusURL, "ABC", user, *verbose)
-
 	if * javaOnboarding == true {
 		b.JavaOnboarding(*nexusURL, *appSysLetters, user, *verbose)
+	} else if * javaOffboarding == true {
+		b.JavaOffboarding(*nexusURL, *appSysLetters, user, *verbose)
 	} else if *list == true {
 		repositories := b.List(*nexusURL, *repoType, *provider, *repoPolicy, user, *verbose)
 		u.PrintStringArray(repositories)
@@ -91,7 +92,7 @@ func main() {
 	} else if *deleteTarget == true {
 		b.DeleteRepoTarget(*nexusURL, *repoTargetName,  user, *verbose)
 	} else if *createPrivileges == true {
-		b.CreatePrivileges(*nexusURL, *privilegeName, *repoTargetName, user, *verbose)
+		b.CreatePrivileges(*nexusURL, *privilegeName, *repoID, *repoTargetName, user, *verbose)
 	} else if *deletePrivileges == true {
 		b.DeletePrivileges(*nexusURL, *privilegeName, user, *verbose)
 	} else if *createRole == true {
@@ -99,7 +100,7 @@ func main() {
 	} else if *deleteRole == true {
 		b.DeleteRole(*nexusURL, *roleName, user, *verbose)
 	} else {
-		//flag.Usage()
+		flag.Usage()
 		log.Fatal("Select a valid action flag")
 	}
 }

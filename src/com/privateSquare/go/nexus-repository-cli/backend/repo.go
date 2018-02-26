@@ -51,11 +51,11 @@ func AddRepoToGroup(nexusURL, groupRepoId, repositories string, user m.AuthUser,
 	json.Unmarshal(resp, &repository)
 	repoIDArray := strings.Split(repositories, ",")
 	for _, repoID := range repoIDArray {
-		if repoExists(nexusURL, repoID, user, verbose) {
+		if repoExists(nexusURL, repoID, user, verbose) || groupRepoExists(nexusURL, repoID, user, verbose) {
 			repository.Data.Repositories = append(repository.Data.Repositories, m.Repositories{ID: repoID})
 			log.Printf("Adding repository with ID=%s to the group repository '%s'.\n", repoID, groupRepoId)
 		} else {
-			log.Printf("Repository with ID=%s does not exist in Nexus, hence not adding it to the group repository.\n", repoID)
+			log.Printf("Repository with ID=%s does not exist in Nexus, hence not adding it to the group repository '%s'.\n", repoID, groupRepoId)
 		}
 
 	}
